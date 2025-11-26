@@ -10,6 +10,8 @@ interface DataContextType {
   updateProject: (project: Project) => Promise<void>;
   deleteProject: (id: string) => Promise<void>;
   addLog: (log: Omit<WorkLog, 'id'>) => Promise<void>;
+  updateLog: (log: WorkLog) => Promise<void>;
+  deleteLog: (id: string) => Promise<void>;
   refreshData: () => Promise<void>;
 }
 
@@ -126,8 +128,40 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     await refreshData();
   };
 
+  const updateLog = async (log: WorkLog) => {
+    if (supabase) {
+      const { id, ...updates } = log;
+      await supabase.from('work_logs').update(updates).eq('id', id);
+    } else {
+      const updated = logs.map(l => l.id === log.id ? log : l);
+      setLogs(updated);
+      localStorage.setItem('architrack_logs', JSON.stringify(updated));
+    }
+    await refreshData();
+  };
+
+  const deleteLog = async (id: string) => {
+    try {
+      if (supabase) {
+        const { error } = await supabase.from('work_logs').delete().eq('id', id);
+        if (error) {
+          console.error("Error deleting log from Supabase:", error);
+          throw error;
+        }
+      } else {
+        const updated = logs.filter(l => l.id !== id);
+        setLogs(updated);
+        localStorage.setItem('architrack_logs', JSON.stringify(updated));
+      }
+      await refreshData();
+    } catch (err) {
+      console.error("Failed to delete log:", err);
+      // Opcional: Podríamos añadir un estado de error global aquí si fuera necesario
+    }
+  };
+
   return (
-    <DataContext.Provider value={{ projects, logs, loading, addProject, updateProject, deleteProject, addLog, refreshData }}>
+    <DataContext.Provider value={{ projects, logs, loading, addProject, updateProject, deleteProject, addLog, updateLog, deleteLog, refreshData }}>
       {children}
     </DataContext.Provider>
   );

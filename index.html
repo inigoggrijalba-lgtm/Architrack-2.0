@@ -4,10 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Architrack</title>
-    <!-- Tailwind via CDN for simplicity -->
+    <!-- Tailwind via CDN for simplicity (Cached by PWA) -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="manifest" href="./manifest.json" />
+    <link rel="icon" type="image/svg+xml" href="/pwa-icon.svg" />
     <meta name="theme-color" content="#0f172a" />
+    <meta name="description" content="Control de horas para arquitectos">
+    <link rel="apple-touch-icon" href="/pwa-icon.svg">
     <style>
       /* PWA Safe Area adjustments */
       body {
@@ -15,6 +17,10 @@
         color: #f8fafc;
         font-family: 'Inter', sans-serif;
         overscroll-behavior-y: none;
+      }
+      /* Force native inputs (date, time) to be dark mode */
+      :root {
+        color-scheme: dark;
       }
       /* Hide scrollbar for clean mobile look */
       ::-webkit-scrollbar {
@@ -28,7 +34,7 @@
         border-radius: 3px;
       }
     </style>
-  <script type="importmap">
+<script type="importmap">
 {
   "imports": {
     "react": "https://aistudiocdn.com/react@^19.2.0",
@@ -40,7 +46,8 @@
     "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0",
     "recharts": "https://aistudiocdn.com/recharts@^3.5.0",
     "vite": "https://aistudiocdn.com/vite@^7.2.4",
-    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.1"
+    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.1",
+    "vite-plugin-pwa": "https://aistudiocdn.com/vite-plugin-pwa@^1.1.0"
   }
 }
 </script>
@@ -50,19 +57,6 @@
     <div id="root"></div>
     <!-- Vite entry point -->
     <script type="module" src="./index.tsx"></script>
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js')
-            .then(registration => {
-              console.log('SW registered: ', registration);
-            })
-            .catch(registrationError => {
-              console.log('SW registration failed: ', registrationError);
-            });
-        });
-      }
-    </script>
   <script type="module" src="/index.tsx"></script>
 </body>
 </html>
